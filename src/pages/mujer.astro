@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import products from '../data/products.json';
+
+const womenProducts = products.filter(p => p.genero === 'mujer');
+const available = womenProducts.filter(p => !p.vendido);
+const sold = womenProducts.filter(p => p.vendido);
+const allProducts = [...available, ...sold];
+---
+
+<Layout title="Mujer - Ropero">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <div class="mb-10">
+      <a href="/" class="text-xs text-warm-400 hover:text-warm-600 transition-colors tracking-wide">&larr; Volver</a>
+      <h1 class="text-3xl font-light tracking-widest uppercase text-warm-800 mt-4">Mujer</h1>
+      <p class="text-sm text-warm-500 mt-2">{available.length} articulos disponibles</p>
+    </div>
+
+    <ProductGrid products={allProducts} />
+  </section>
+</Layout>

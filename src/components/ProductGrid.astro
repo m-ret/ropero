@@ -1,0 +1,83 @@
+---
+import ProductCard from './ProductCard.astro';
+
+interface Product {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  talla: string;
+  precio: number;
+  categoria: string;
+  genero: string;
+  imagen: string;
+  vendido: boolean;
+}
+
+interface Props {
+  products: Product[];
+  showCategoryFilter?: boolean;
+}
+
+const { products, showCategoryFilter = true } = Astro.props;
+
+const categorias = [
+  { value: 'todos', label: 'Todos' },
+  { value: 'tops', label: 'Tops' },
+  { value: 'bottoms', label: 'Bottoms' },
+  { value: 'zapatos', label: 'Zapatos' },
+  { value: 'accesorios', label: 'Accesorios' },
+];
+---
+
+{showCategoryFilter && (
+  <div class="flex gap-4 mb-8 flex-wrap" id="filters">
+    {categorias.map(cat => (
+      <button
+        data-category={cat.value}
+        class:list={[
+          "text-xs tracking-widest uppercase pb-1 border-b-2 transition-colors cursor-pointer filter-btn",
+          cat.value === 'todos'
+            ? "border-warm-700 text-warm-800"
+            : "border-transparent text-warm-400 hover:text-warm-700"
+        ]}
+      >
+        {cat.label}
+      </button>
+    ))}
+  </div>
+)}
+
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8" id="product-grid">
+  {products.map(product => (
+    <div data-category={product.categoria}>
+      <ProductCard {...product} />
+    </div>
+  ))}
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('#product-grid > div');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = (btn as HTMLElement).dataset.category;
+
+      buttons.forEach(b => {
+        b.classList.remove('border-warm-700', 'text-warm-800');
+        b.classList.add('border-transparent', 'text-warm-400');
+      });
+      btn.classList.add('border-warm-700', 'text-warm-800');
+      btn.classList.remove('border-transparent', 'text-warm-400');
+
+      items.forEach(item => {
+        const el = item as HTMLElement;
+        if (category === 'todos' || el.dataset.category === category) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
